@@ -210,10 +210,10 @@
         "es": "Intervalo de actualización"
       },
       "description": {
-        "en": "How often OpenProject is read (five requests each time). Event times and midnight are always followed on time.",
-        "fr": "Fréquence de lecture d'OpenProject (cinq requêtes à chaque fois). Les heures des événements et minuit sont toujours suivis à l'heure.",
-        "de": "Wie oft OpenProject gelesen wird (jeweils fünf Anfragen). Ereigniszeiten und Mitternacht werden immer pünktlich verfolgt.",
-        "es": "Frecuencia de lectura de OpenProject (cinco solicitudes cada vez). Las horas de los eventos y la medianoche se siguen siempre a tiempo."
+        "en": "How often OpenProject is read (seven requests each time). Event times and midnight are always followed on time.",
+        "fr": "Fréquence de lecture d'OpenProject (sept requêtes à chaque fois). Les heures des événements et minuit sont toujours suivis à l'heure.",
+        "de": "Wie oft OpenProject gelesen wird (jeweils sieben Anfragen). Ereigniszeiten und Mitternacht werden immer pünktlich verfolgt.",
+        "es": "Frecuencia de lectura de OpenProject (siete solicitudes cada vez). Las horas de los eventos y la medianoche se siguen siempre a tiempo."
       },
       "required": false,
       "default": "300",

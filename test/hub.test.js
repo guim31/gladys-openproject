@@ -109,10 +109,10 @@ test('projects by name, identifier or id; an unknown one is reported', async (t)
   assert.match(report.data.message.en, /Unknown project\(s\) ignored: potager/);
 });
 
-test('the requests: five per reading (and the user once), filters as JSON', async (t) => {
+test('the requests: seven per reading (and the user once), filters as JSON', async (t) => {
   const w = await world(t);
   const paths = w.server.requests.map((request) => decodeURIComponent(request.path));
-  assert.equal(paths.length, 6);
+  assert.equal(paths.length, 8);
   assert.match(paths[0], /^\/api\/v3\/users\/me$/);
   assert.match(paths[1], /^\/api\/v3\/projects\?filters=\[\{"active"/);
   assert.match(paths[2], /groupBy=project&pageSize=0$/);
@@ -120,10 +120,57 @@ test('the requests: five per reading (and the user once), filters as JSON', asyn
     paths[3],
     /"updatedAt":\{"operator":"<>d","values":\["2026-10-29T23:00:00.000Z",""\]/,
   );
-  assert.match(paths[4], /"dueDate":\{"operator":"<>d","values":\["","2026-12-29"\]/);
-  assert.match(paths[5], /"assignee":\{"operator":"=","values":\["me"\]/);
+  assert.match(paths[4], /"dueDate":\{"operator":"<>d","values":\["","2026-10-29"\]\}.*groupBy/);
+  assert.match(paths[5], /"values":\["","2026-10-29"\].*\["dueDate","desc"\]/);
+  assert.match(paths[6], /"dueDate":\{"operator":"<>d","values":\["2026-10-29","2026-12-29"\]/);
+  assert.match(paths[7], /"assignee":\{"operator":"=","values":\["me"\]/);
   await w.hub.poll();
-  assert.equal(w.server.requests.length, 6 + 5, 'the user is read once');
+  assert.equal(w.server.requests.length, 8 + 7, 'the user is read once');
+});
+
+test('a big instance: more than a page of old overdue ones, today is still seen', async (t) => {
+  const server = new FakeOpenProject();
+  for (let i = 0; i < 1100; i += 1) {
+    server.workPackages.push({
+      ...structuredClone(server.find(43)),
+      id: 1000 + i,
+      subject: `Old ${i}`,
+      dueDate: '2025-01-15',
+    });
+  }
+  const w = await world(t, { server });
+  assert.deepEqual(counters(w, instanceId(w.gladys)), {
+    open: 1108,
+    dueToday: 2,
+    overdue: 1102,
+    mine: 3,
+    done: 2,
+    next: 'Arroser les plantes · Fri 30 Oct',
+  });
+  const today = await w.fake.sceneAction('read_today', {});
+  assert.equal(today.data.outputs.count, 1002, 'the 1000 most recent overdue, then today');
+  assert.equal(today.data.outputs.overdue, 1102);
+});
+
+test('another key on the same instance: its assignments are not news', async (t) => {
+  const server = new FakeOpenProject();
+  const w = await world(t, { server });
+  server.me = { ...server.me, id: 5, name: 'Camille Martin' };
+  server.apiKey = 'camille-key';
+  await w.fake.configUpdated({ ...BASE_CONFIG, api_key: 'camille-key' });
+  assert.deepEqual(events(w), []);
+  server.update(45, { assignee: 5 });
+  w.clock.advance(60_000);
+  await w.hub.poll();
+  assert.deepEqual(events(w), ['work_package_assigned:Payer la cantine']);
+});
+
+test('midnight crossed during a slow reading: read again soon', async (t) => {
+  const clock = createClock(Date.UTC(2026, 9, 30, 22, 59, 55));
+  const w = await world(t, { clock });
+  const readAt = clock.now();
+  clock.advance(11_000);
+  assert.equal(w.hub.nextDelay(readAt), w.hub.timings.minDelayMs);
 });
 
 test('the "due" event at 08:00 on the due day, "overdue" at midnight', async (t) => {

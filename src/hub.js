@@ -86,6 +86,9 @@ const EMPTY = () => ({
   doneTotal: 0,
   doneCounts: new Map(),
   dated: [],
+  late: [],
+  lateTotal: 0,
+  lateCounts: new Map(),
   mine: [],
 });
 
@@ -119,8 +122,6 @@ export class OpenProjectHub {
     this.timer = null;
     this.polling = null;
     this.stopped = false;
-    /** Problems already logged, by key: repeats go to debug. */
-    this.warned = new Set();
   }
 
   reset() {
@@ -135,6 +136,8 @@ export class OpenProjectHub {
     this.downSince = null;
     this.readAt = 0;
     this.connectedLogged = false;
+    /** Problems already logged, by key: repeats go to debug. */
+    this.warned = new Set();
   }
 
   // --- Logs ------------------------------------------------------------------
@@ -229,6 +232,10 @@ export class OpenProjectHub {
 
   /** The moment of the "due" event of a work package: its due day, at the configured hour. */
   dueMoment(item) {
+    if (this.config.dueHour === 0) {
+      // The start of the day, also where midnight does not exist (Chile, Cuba).
+      return item.dueAt;
+    }
     const [y, m, d] = item.dueDay.split('-').map(Number);
     return localTime(y, m, d, this.config.dueHour, 0, this.timeZone);
   }
@@ -247,8 +254,8 @@ export class OpenProjectHub {
         moments.push(due);
       }
     }
-    const ahead = moments.filter((moment) => moment + this.timings.wakeSlackMs > now);
-    const wake = ahead.length === 0 ? 0 : Math.min(...ahead) - now + this.timings.wakeSlackMs;
+    // A moment crossed while reading (a slow server at 23:59:55): read again soon.
+    const wake = Math.max(0, Math.min(...moments) - now + this.timings.wakeSlackMs);
     return Math.max(this.timings.minDelayMs, Math.min(this.config.pollIntervalMs, wake));
   }
 
@@ -282,10 +289,29 @@ export class OpenProjectHub {
       groupBy: 'project',
     });
     const options = { userId: user.id, timeZone: this.timeZone };
+    const yesterday = addDays(now, -1, this.timeZone);
+    // Every overdue one is counted, per project; their elements, the most
+    // recent first, are read apart: a big instance with more than a page of
+    // old overdue work packages still sees today's.
+    const lateFilters = [OPEN, { dueDate: { operator: '<>d', values: ['', yesterday] } }];
+    const lateCounts = await client.workPackages({ filters: lateFilters, groupBy: 'project' });
+    const late = await client.workPackages({
+      filters: lateFilters,
+      sortBy: [
+        ['dueDate', 'desc'],
+        ['id', 'asc'],
+      ],
+    });
+    // From yesterday: the "overdue" events at midnight need yesterday's.
     const dated = await client.workPackages({
       filters: [
         OPEN,
-        { dueDate: { operator: '<>d', values: ['', addDays(now, HORIZON_DAYS, this.timeZone)] } },
+        {
+          dueDate: {
+            operator: '<>d',
+            values: [yesterday, addDays(now, HORIZON_DAYS, this.timeZone)],
+          },
+        },
       ],
       sortBy: [
         ['dueDate', 'asc'],
@@ -298,6 +324,7 @@ export class OpenProjectHub {
     });
     for (const [key, answer] of [
       ['dated', dated],
+      ['late', late],
       ['mine', mine],
     ]) {
       if (answer.total > answer.count) {
@@ -318,6 +345,9 @@ export class OpenProjectHub {
         doneTotal: done.total,
         doneCounts: parseGroups(done.groups),
         dated: parseWorkPackages(dated.elements, options).filter((item) => item.dueAt !== null),
+        late: parseWorkPackages(late.elements, options).filter((item) => item.dueAt !== null),
+        lateTotal: lateCounts.total,
+        lateCounts: parseGroups(lateCounts.groups),
         mine: parseWorkPackages(mine.elements, options),
       },
     };
@@ -457,16 +487,25 @@ export class OpenProjectHub {
    */
   summary(projectId = null, { onlyMine = false } = {}) {
     const { data } = this;
-    const inScope = (item) =>
-      (projectId === null || item.projectId === projectId) && (!onlyMine || item.mine);
+    const inProject = (item) => projectId === null || item.projectId === projectId;
+    const mine = data.mine.filter(inProject);
+    const day = localDay(this.now(), this.timeZone);
+    const open = projectId === null ? data.openTotal : (data.openCounts.get(projectId) ?? 0);
+    const done = projectId === null ? data.doneTotal : (data.doneCounts.get(projectId) ?? 0);
+    if (onlyMine) {
+      // Every open one assigned to me is read: the overdue ones are all there.
+      return summarize({ dated: mine, late: mine, mine: mine.length, open, done }, day);
+    }
     return summarize(
       {
-        dated: data.dated.filter(inScope),
-        mine: data.mine.filter(inScope),
-        open: projectId === null ? data.openTotal : (data.openCounts.get(projectId) ?? 0),
-        done: projectId === null ? data.doneTotal : (data.doneCounts.get(projectId) ?? 0),
+        dated: data.dated.filter(inProject),
+        late: data.late.filter(inProject),
+        overdueCount: projectId === null ? data.lateTotal : (data.lateCounts.get(projectId) ?? 0),
+        mine: mine.length,
+        open,
+        done,
       },
-      localDay(this.now(), this.timeZone),
+      day,
     );
   }
 
@@ -638,7 +677,8 @@ export class OpenProjectHub {
    *     over fires nothing.
    */
   async fireEvents(now) {
-    const scope = this.config.url;
+    // Another key on the same instance is another user: their assignments are not news.
+    const scope = `${this.config.url}#${this.user?.id ?? ''}`;
     const mine = this.data.mine.map((item) => item.id);
     if (this.saved.scope !== scope || this.saved.readAt === 0) {
       // First reading of this instance: what already passed is not news.

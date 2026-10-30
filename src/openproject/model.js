@@ -191,26 +191,29 @@ export function addDays(ms, days, timeZone) {
 /**
  * Counters of one day, for a scope: the whole instance, or one project.
  * @param {object} reading
- * @param {ReturnType<typeof parseWorkPackages>} reading.dated open, with a due day
- * @param {ReturnType<typeof parseWorkPackages>} reading.mine open, assigned to the user
+ * @param {ReturnType<typeof parseWorkPackages>} reading.dated open, due from yesterday on
+ * @param {ReturnType<typeof parseWorkPackages>} reading.late open and overdue, the most recent ones
+ * @param {number} [reading.overdueCount] every overdue one (else `late` is complete)
+ * @param {number} reading.mine open, assigned to the user
  * @param {number} reading.open open work packages
  * @param {number} reading.done closed today
  * @param {{ start: number, end: number }} day
  */
-export function summarize({ dated, mine, open, done }, day) {
-  const sorted = dated
-    .filter((item) => item.dueAt !== null)
-    .sort((a, b) => a.dueAt - b.dueAt || Number(a.id) - Number(b.id));
+export function summarize({ dated, late, overdueCount, mine, open, done }, day) {
+  const order = (a, b) => a.dueAt - b.dueAt || Number(a.id) - Number(b.id);
+  const ahead = dated.filter((item) => item.dueAt !== null && item.dueAt >= day.start).sort(order);
+  const behind = late.filter((item) => item.dueAt !== null && item.dueAt < day.start).sort(order);
+  const today = ahead.filter((item) => item.dueAt < day.end);
   return {
     dayStart: day.start,
     open,
     done,
-    mine: mine.length,
-    overdue: sorted.filter((item) => item.dueAt < day.start).length,
-    dueToday: sorted.filter((item) => item.dueAt >= day.start && item.dueAt < day.end).length,
-    next: sorted.find((item) => item.dueAt >= day.start) ?? null,
+    mine,
+    overdue: overdueCount ?? behind.length,
+    dueToday: today.length,
+    next: ahead[0] ?? null,
     // What is left by tonight: overdue first, then today's.
-    agenda: sorted.filter((item) => item.dueAt < day.end),
+    agenda: [...behind, ...today],
   };
 }
 

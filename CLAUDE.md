@@ -249,6 +249,12 @@ code de ce dépôt. Compléter ce fichier quand un nouveau piège est découvert
   reçoit `dueDate` et le rend en `date`. Date invalide : **422** `PropertyFormatError` avec un message
   lisible, repris pour l'utilisateur. Projet inconnu : 404. L'assigné doit être membre du projet (422
   sinon).
+- **Une lecture = sept requêtes** (plus `users/me` une fois) : projets, ouverts par projet, fermés du
+  jour par projet, retards par projet (`groupBy`), retards les plus récents d'abord (`dueDate desc`), lots
+  dus d'hier à 60 jours, lots assignés à moi. Les retards sont comptés à part : sur une grosse instance,
+  une page de 1000 vieux retards triés par date croissante cachait ceux du jour (relecture du 30/10).
+- La portée de l'état sous `/data` est `adresse#id de l'utilisateur` : une autre clé sur la même instance
+  ne déclenche pas une salve de « assigné à moi ».
 - Pas de date de fermeture dans l'API : « terminés aujourd'hui » = fermés et `updatedAt` depuis minuit.
 - `PATCH` d'un lot exige son `lockVersion` (409 sinon) — non utilisé par l'intégration, utile aux essais.
 - État `/data/openproject-state.json` : `mine` (identifiants des lots ouverts assignés à moi, pour le

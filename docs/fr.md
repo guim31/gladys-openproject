@@ -113,8 +113,11 @@ statut, la personne assignée, son échéance (`AAAA-MM-JJ`) et son adresse dans
 OpenProject.
 
 Un changement est vu à la lecture suivante : dans l'intervalle de
-rafraîchissement. Une échéance déplacée à la main sur un jour déjà passé ne
-déclenche rien. Un redémarrage ne déclenche rien deux fois ; un lot assigné
+rafraîchissement. Une échéance déplacée à la main sur un jour déjà passé, ou à
+aujourd'hui après l'heure de l'événement « à échéance », ne déclenche pas
+d'événement « à échéance » (celui « en retard » part bien à minuit) ; de même
+pour une heure plus tardive choisie dans la configuration une fois celle du
+jour passée. Un redémarrage ne déclenche rien deux fois ; un lot assigné
 pendant l'arrêt de l'intégration déclenche à son redémarrage, de même qu'une
 échéance de moins d'une heure.
 
@@ -173,10 +176,11 @@ fumée` dans `maison`, échéance `+7d`.
 
 - OpenProject est lu toutes les 1 à 10 minutes (et à l'heure des événements et
   à minuit) : un changement dans OpenProject apparaît dans Gladys dans ce
-  délai. Les webhooks d'OpenProject ne servent pas. Chaque lecture fait cinq
-  requêtes (projets, deux comptages, lots datés, lots assignés).
-- Seuls comptent pour les échéances les lots dus jusqu'à 60 jours devant, au
-  plus 1000 (et 1000 lots assignés au plus) ; au-delà, les logs le signalent.
+  délai. Les webhooks d'OpenProject ne servent pas. Chaque lecture fait sept
+  requêtes (projets, trois comptages, lots en retard, datés et assignés).
+- Tous les lots en retard sont comptés ; les listes gardent au plus les 1000
+  retards les plus récents, 1000 lots dus d'hier à 60 jours devant et 1000
+  lots assignés ; au-delà, les logs le signalent.
 - L'intégration crée des lots ; elle ne les modifie, ne les ferme, ne les
   assigne ni ne les supprime, et ne lit ni leurs commentaires, ni leurs
   pièces jointes, ni le temps passé.

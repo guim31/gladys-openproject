@@ -118,7 +118,10 @@ Adresse in OpenProject.
 
 Eine Änderung wird beim nächsten Lesen gesehen: innerhalb des
 Aktualisierungsintervalls. Eine von Hand auf einen schon vergangenen Tag
-verschobene Fälligkeit löst nichts aus. Ein Neustart löst nichts doppelt aus;
+verschobene Fälligkeit, oder auf heute nach der Uhrzeit des Ereignisses
+„fällig“, löst kein Ereignis „fällig“ aus (das Ereignis „überfällig“ kommt um
+Mitternacht trotzdem); ebenso eine spätere Uhrzeit, die in der Konfiguration
+gewählt wird, nachdem die heutige vorbei ist. Ein Neustart löst nichts doppelt aus;
 ein Arbeitspaket, das zugewiesen wurde, während die Integration gestoppt war,
 löst beim Neustart aus, ebenso eine Fälligkeit, die weniger als eine Stunde
 zurückliegt.
@@ -183,11 +186,12 @@ Die Felder akzeptieren Szenenvariablen, zum Beispiel
 - OpenProject wird alle 1 bis 10 Minuten gelesen (und zu den Ereigniszeiten
   und um Mitternacht): Eine Änderung in OpenProject erscheint in Gladys
   innerhalb dieser Zeit. Die Webhooks von OpenProject werden nicht genutzt.
-  Jedes Lesen macht fünf Anfragen (Projekte, zwei Zählungen, datierte
-  Arbeitspakete, zugewiesene Arbeitspakete).
-- Für die Fälligkeiten zählen nur Arbeitspakete, die bis zu 60 Tage im Voraus
-  fällig sind, höchstens 1000 (und höchstens 1000 zugewiesene); darüber hinaus
-  melden es die Protokolle.
+  Jedes Lesen macht sieben Anfragen (Projekte, drei Zählungen,
+  überfällige, datierte und zugewiesene Arbeitspakete).
+- Alle überfälligen Arbeitspakete werden gezählt; die Listen enthalten
+  höchstens die 1000 jüngsten überfälligen, 1000 von gestern bis 60 Tage im
+  Voraus fällige und 1000 zugewiesene; darüber hinaus melden es die
+  Protokolle.
 - Die Integration erstellt Arbeitspakete; sie ändert, schließt, weist sie
   nicht zu und löscht sie nicht, und liest weder ihre Kommentare noch ihre
   Anhänge noch die aufgewendete Zeit.

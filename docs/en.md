@@ -105,7 +105,10 @@ the actions: the work package, its id, its project, its type, its status, the
 assignee, its due date (`YYYY-MM-DD`) and its address in OpenProject.
 
 A change is seen at the next reading: within the refresh interval. A due date
-moved by hand to a day already over fires nothing. A restart fires nothing
+moved by hand to a day already over, or to today after the time of the "due"
+event, fires no "due" event (the "overdue" one still comes at midnight); the
+same goes for a later time chosen in the configuration once today's has
+passed. A restart fires nothing
 twice; a work package assigned while the integration was stopped fires at its
 restart, as does a due date less than an hour old.
 
@@ -165,11 +168,11 @@ The fields accept scene variables, for example
 
 - OpenProject is read every 1 to 10 minutes (and at the event times and at
   midnight): a change in OpenProject shows in Gladys within that delay.
-  OpenProject's webhooks are not used. Each reading makes five requests
-  (projects, two counts, dated work packages, assigned work packages).
-- Only the work packages due up to 60 days ahead count for the due dates,
-  1000 at most (and 1000 assigned work packages at most); beyond, the logs say
-  so.
+  OpenProject's webhooks are not used. Each reading makes seven requests
+  (projects, three counts, overdue, dated and assigned work packages).
+- Every overdue work package is counted; the lists hold the 1000 most recent
+  overdue ones, 1000 due from yesterday to 60 days ahead and 1000 assigned
+  ones at most; beyond, the logs say so.
 - The integration creates work packages; it does not change, close, assign or
   delete them, and reads neither their comments, nor their attachments, nor
   the time spent.

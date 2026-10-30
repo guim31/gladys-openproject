@@ -34,6 +34,7 @@ test('the address: bare host, copied browser URL, API URL, reverse proxy prefix'
   assert.equal(
     parseServerUrl('https://op.example.org/projects/maison/work_packages?query_id=3'),
     'https://op.example.org',
+    'https://fdx.example.com',
   );
   assert.equal(parseServerUrl('https://op.example.org/api/v3/'), 'https://op.example.org');
   assert.equal(
@@ -128,7 +129,7 @@ test('the counters of a day', () => {
     timeZone: TIME_ZONE,
   });
   const summary = summarize(
-    { dated, mine: [1, 2, 3], open: 8, done: 2 },
+    { dated, late: dated, mine: 3, open: 8, done: 2 },
     localDay(START, TIME_ZONE),
   );
   assert.equal(summary.overdue, 2);

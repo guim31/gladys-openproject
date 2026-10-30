@@ -110,8 +110,10 @@ estado, la persona asignada, su vencimiento (`AAAA-MM-DD`) y su dirección en
 OpenProject.
 
 Un cambio se ve en la lectura siguiente: dentro del intervalo de
-actualización. Un vencimiento movido a mano a un día ya pasado no dispara
-nada. Un reinicio no dispara nada dos veces; un paquete asignado mientras la
+actualización. Un vencimiento movido a mano a un día ya pasado, o a hoy
+después de la hora del evento «vence», no dispara el evento «vence» (el
+evento «atrasado» llega igualmente a medianoche); lo mismo para una hora más
+tardía elegida en la configuración una vez pasada la de hoy. Un reinicio no dispara nada dos veces; un paquete asignado mientras la
 integración estaba detenida dispara al reiniciarse, igual que un vencimiento
 de menos de una hora.
 
@@ -172,11 +174,11 @@ Los campos aceptan variables de escena, por ejemplo
 
 - OpenProject se lee cada 1 a 10 minutos (y a las horas de los eventos y a
   medianoche): un cambio en OpenProject aparece en Gladys en ese plazo. Los
-  webhooks de OpenProject no se usan. Cada lectura hace cinco solicitudes
-  (proyectos, dos recuentos, paquetes con fecha, paquetes asignados).
-- Para los vencimientos solo cuentan los paquetes que vencen hasta 60 días
-  después, 1000 como máximo (y 1000 paquetes asignados como máximo); más allá,
-  los registros lo indican.
+  webhooks de OpenProject no se usan. Cada lectura hace siete solicitudes
+  (proyectos, tres recuentos, paquetes atrasados, con fecha y asignados).
+- Se cuentan todos los paquetes atrasados; las listas guardan como máximo los
+  1000 atrasados más recientes, 1000 que vencen de ayer a 60 días después y
+  1000 asignados; más allá, los registros lo indican.
 - La integración crea paquetes; no los modifica, ni los cierra, ni los asigna,
   ni los elimina, y no lee ni sus comentarios, ni sus adjuntos, ni el tiempo
   dedicado.

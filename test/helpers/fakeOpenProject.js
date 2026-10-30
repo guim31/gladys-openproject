@@ -154,7 +154,7 @@ export class FakeOpenProject {
         if (operator === 'o' && this.closed.has(status)) return false;
         if (operator === 'c' && !this.closed.has(status)) return false;
       } else if (name === 'assignee') {
-        const wanted = values.map((value) => (value === 'me' ? String(USER_ID) : value));
+        const wanted = values.map((value) => (value === 'me' ? String(this.me.id) : value));
         if (!wanted.includes(idOf(item._links.assignee))) return false;
       } else if (name === 'dueDate') {
         const day = item.dueDate ?? item.date ?? null;

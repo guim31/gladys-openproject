@@ -71,7 +71,9 @@ OpenProject (HAL+JSON), with the API key in HTTP Basic (`apikey:<key>`):
 | `GET /api/v3/projects` (active)                              | the projects, to follow some by name or identifier |
 | `GET /api/v3/work_packages` open, `groupBy=project`, page 0  | the open work packages, per project                |
 | `GET /api/v3/work_packages` closed, updated today, `groupBy` | the work packages done today, per project          |
-| `GET /api/v3/work_packages` open, due up to 60 days ahead    | due today, overdue, next due date, the due events  |
+| `GET /api/v3/work_packages` open, overdue, `groupBy`         | every overdue one, per project                     |
+| `GET /api/v3/work_packages` open, overdue, most recent first | the overdue ones of the widget and of the sentence |
+| `GET /api/v3/work_packages` open, due yesterday to 60 days   | due today, next due date, the due events           |
 | `GET /api/v3/work_packages` open, assignee `me`              | assigned to me, and its trigger                    |
 | `GET /api/v3/projects/{id}/types`, `POST …/work_packages`    | create a work package                              |
 
@@ -90,7 +92,7 @@ and needs no change on the OpenProject side.
 Checked against `openproject/openproject:16` (all-in-one image, Community
 edition) in a Docker network, on 30 October 2026: two projects, a second user,
 tasks due in the past, today, after a weekend, a milestone, undated ones, two
-closed today; the four queries of a reading, creation of tasks and
+closed today; the work package queries of a reading, creation of tasks and
 milestones, the error answers (wrong key, no key, unknown project, invalid
 date, the HTML page outside the API). The real answers are in
 `test/fixtures/openproject/` and drive the tests, and a test checks that the

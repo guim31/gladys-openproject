@@ -89,3 +89,14 @@ test('a command from Gladys writes one line; never the key, even at debug', asyn
   await refused.hub.poll();
   assert.ok(!logs.texts().join('\n').includes('secret-wrong'), 'never a refused key');
 });
+
+test('an outage after a corrected key is still logged', async (t) => {
+  const logs = captureLogs(t);
+  const w = await world(t, { config: { ...BASE_CONFIG, api_key: 'wrong' } });
+  await w.fake.configUpdated(BASE_CONFIG);
+  logs.clear();
+  w.server.failure = down;
+  await w.hub.poll();
+  assert.equal(logs.lines.length, 1, 'the new outage, at error');
+  assert.match(logs.lines[0].text, /ECONNREFUSED/);
+});

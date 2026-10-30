@@ -96,7 +96,7 @@ export function isLocalAddress(url) {
       (a === 100 && b >= 64 && b <= 127)
     );
   }
-  return host === '::1' || /^(fc|fd|fe80)/.test(host);
+  return host.includes(':') && (host === '::1' || /^(fc|fd|fe80)/.test(host));
 }
 
 /**
