@@ -1,0 +1,29 @@
+{
+  "id": 49,
+  "subject": "Vérifier les détecteurs de fumée",
+  "dueDate": "2026-11-02",
+  "startDate": null,
+  "_type": "WorkPackage",
+  "lockVersion": 0,
+  "_links": {
+    "self": {
+      "href": "/api/v3/work_packages/49",
+      "title": "Vérifier les détecteurs de fumée"
+    },
+    "project": {
+      "href": "/api/v3/projects/3",
+      "title": "Maison"
+    },
+    "status": {
+      "href": "/api/v3/statuses/1",
+      "title": "New"
+    },
+    "type": {
+      "href": "/api/v3/types/1",
+      "title": "Task"
+    },
+    "assignee": {
+      "href": null
+    }
+  }
+}

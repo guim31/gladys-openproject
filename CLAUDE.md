@@ -16,8 +16,8 @@ its only runtime dependency. It started from the official JavaScript template.
 ```bash
 npm install
 npm test                                  # node --test, the built-in runner
-node --test test/devices.test.js          # one file
-node --test --test-name-pattern "plug"    # tests whose name matches
+node --test test/hub.test.js              # one file
+node --test --test-name-pattern "due"     # tests whose name matches
 npm run lint                              # ESLint
 npm run format:check                      # Prettier, as the CI runs it
 npm run format                            # Prettier, fix in place
@@ -31,16 +31,22 @@ pushing.
 ## Architecture
 
 ```
-index.js                          SDK wiring only: handlers registered before connect()
-src/devices/index.js              registry of the device blueprints + dispatch helpers
-src/devices/<type>.js             one device type per file (buildDevice, onPoll, onSetValue...)
-src/scenes.js                     scene action handlers (manifest `scene_actions`)
-src/widgets.js                    dashboard widget handlers (manifest `widgets`)
+index.js                          SDK wiring only: src/app.js registers the handlers before connect()
+src/app.js                        every SDK handler -> the hub (also used by the tests)
+src/hub.js                        reading timer, states, scene events, commands, deduplicated logs
+src/devices.js                    instance and project devices: features, names (4 languages), states
+src/openproject/client.js         API v3 client (HTTP Basic apikey:<key>), errors by kind
+src/openproject/http.js           node:http/https request (self-signed certificates on request)
+src/openproject/model.js          projects, work packages, group counts; local day; counters; lookup
+src/scenes.js                     scene actions create_work_package, read_today
+src/widgets.js                    dashboard widget `work_packages_today` (manifest `widgets`)
+src/texts.js                      connection, error, report and action texts (4 languages)
 src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults) + normalization
-src/weather.js                    example driver (Open-Meteo)
+src/store.js                      /data/openproject-state.json (instance, last reading, assigned ids)
 gladys-assistant-integration.json manifest: name, config_schema, actions, image...
-docs/en.md, docs/fr.md            user documentation, re-hosted by Gladys (mandatory)
+docs/{en,fr,de,es}.md             user documentation, re-hosted by Gladys (en and fr mandatory)
 test/                             node --test, against the SDK's fake Gladys (integration-sdk/testing)
+                                  and helpers/fakeOpenProject.js (built from test/fixtures/openproject)
 .github/scripts/release.mjs       release helpers (manifest bump, changelog), tested in test/
 ```
 
@@ -70,8 +76,9 @@ test/                             node --test, against the SDK's fake Gladys (in
   `type: "provider"`: 5.1.0). `test/manifest.test.js` ties the manifest to the
   code (defaults, action, scene and widget handlers): change both sides
   together.
-- **User-facing text** is bilingual (English and French): action messages,
-  manifest texts, and `docs/en.md` / `docs/fr.md`, kept in sync.
+- **User-facing text** exists in English, French, German and Spanish: action
+  messages, widget content, feature names, manifest texts, and
+  `docs/{en,fr,de,es}.md`, kept in sync (`test/i18n.test.js`).
 - **Style.** Prettier formats, ESLint catches mistakes. Comments explain why,
   in English. Tests never touch the network.
 
@@ -214,6 +221,46 @@ code de ce dépôt. Compléter ce fichier quand un nouveau piège est découvert
 - Les filtres de scène ne font qu'égalité et appartenance : un seuil reste le travail d'un capteur.
 - **Les clés de widgets, de déclencheurs et d'actions sont figées une fois publiées.**
 - `gladys_version` `>=5.1.0` dès qu'il y a widgets, déclencheurs ou actions de scène.
+
+## OpenProject (propre à ce dépôt)
+
+- **API** vérifiée sur `openproject/openproject:16` (image tout-en-un, édition Community) en Docker le
+  30/10/2026 (`OPENPROJECT_SECRET_KEY_BASE`, `OPENPROJECT_HOST__NAME`, `OPENPROJECT_HTTPS=false` ; 2 Go de
+  mémoire, ~8 min de premier démarrage ; clé créée par `rails runner` avec `Token::API.create!(user:)`, puis
+  `plain_value`). Structure reprise de gladys-wekan.
+- **Authentification** : HTTP Basic `apikey:<clé>`. Mauvaise clé ou pas de clé : **401**
+  `{ _type: "Error", errorIdentifier: "…:Unauthenticated", message }`. Une instance ouverte aux anonymes
+  répondrait `AnonymousUser` à `/users/me` : traité comme une clé refusée.
+- **Hors de l'API** (mauvais préfixe), l'application répond une page HTML en 404 : « pas OpenProject ».
+- **Filtres** (`filters` en JSON) : statut `o` / `c` (ouvert / fermé selon `isClosed`, côté serveur) ;
+  `assignee` `=` `["me"]` ; `dueDate` `<>d` `["", "AAAA-MM-JJ"]` (jusqu'à une date, retards compris).
+  **Piège** : `<t+` `["60"]` (« dans moins de N jours ») **exclut les lots en retard**. `updatedAt` `<>d`
+  accepte un instant ISO 8601 (`["2026-10-29T23:00:00.000Z", ""]`).
+- Le filtre `dueDate` couvre les **jalons**, dont l'échéance est rendue dans `date` (pas `dueDate`) ; le tri
+  `dueDate` les range aussi.
+- **`select`** (`total,count,elements/id,…`) allège la réponse (~300 octets par lot) mais **retire `_type`**
+  de la collection et refuse `groups` et `updatedAt` (**400** `InvalidSignal`). Les comptages passent donc par
+  `groupBy=project&pageSize=0` sans `select` : `groups[{ value, count, _links.valueLink[0].href }]`, aucun
+  élément. Taille de page maximale : 1000.
+- **Création** : `POST /api/v3/projects/:id/work_packages` `{ subject, dueDate?, _links.type }` → 201.
+  **Un type inconnu est remplacé en silence par le type par défaut** (201, `Task`) : le type est cherché
+  par son nom dans `GET /projects/:id/types` avant. **Une échéance un jour non ouvré (week-end par défaut)
+  est déplacée au jour ouvré suivant** (31/10/2026 → 02/11) : l'action rend la date de la réponse. Un jalon
+  reçoit `dueDate` et le rend en `date`. Date invalide : **422** `PropertyFormatError` avec un message
+  lisible, repris pour l'utilisateur. Projet inconnu : 404. L'assigné doit être membre du projet (422
+  sinon).
+- **Une lecture = sept requêtes** (plus `users/me` une fois) : projets, ouverts par projet, fermés du
+  jour par projet, retards par projet (`groupBy`), retards les plus récents d'abord (`dueDate desc`), lots
+  dus d'hier à 60 jours, lots assignés à moi. Les retards sont comptés à part : sur une grosse instance,
+  une page de 1000 vieux retards triés par date croissante cachait ceux du jour (relecture du 30/10) ; ces
+  requêtes (`<>d` à deux bornes, `dueDate desc`) ont été vérifiées par l'essai complet contre le vrai
+  serveur, pas par des fixtures.
+- La portée de l'état sous `/data` est `adresse#id de l'utilisateur` : une autre clé sur la même instance
+  ne déclenche pas une salve de « assigné à moi ».
+- Pas de date de fermeture dans l'API : « terminés aujourd'hui » = fermés et `updatedAt` depuis minuit.
+- `PATCH` d'un lot exige son `lockVersion` (409 sinon) — non utilisé par l'intégration, utile aux essais.
+- État `/data/openproject-state.json` : `mine` (identifiants des lots ouverts assignés à moi, pour le
+  déclencheur) et `sent` (événements d'échéance déjà envoyés au moment où Gladys en a refusé un).
 
 ## Store
 

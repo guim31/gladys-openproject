@@ -1,8 +1,8 @@
 {
-  "name": "gladys-integration-template-js",
+  "name": "gladys-openproject",
   "version": "1.0.0",
   "private": true,
-  "description": "Official starter template to build an external integration for Gladys Assistant with the JavaScript SDK.",
+  "description": "OpenProject integration for Gladys Assistant: work packages open, due today, overdue, assigned to me, created from a scene.",
   "type": "module",
   "main": "index.js",
   "scripts": {

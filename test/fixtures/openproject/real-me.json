@@ -1,0 +1,40 @@
+{
+  "_type": "User",
+  "id": 4,
+  "name": "OpenProject Admin",
+  "createdAt": "2026-10-30T17:21:41.910Z",
+  "updatedAt": "2026-10-30T17:21:41.910Z",
+  "login": "admin",
+  "admin": true,
+  "firstName": "OpenProject",
+  "lastName": "Admin",
+  "email": "demo@example.org",
+  "avatar": "",
+  "status": "active",
+  "identityUrl": null,
+  "language": "en",
+  "_links": {
+    "self": {
+      "href": "/api/v3/users/4",
+      "title": "OpenProject Admin"
+    },
+    "memberships": {
+      "href": "/api/v3/memberships?filters=%5B%7B%22principal%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%224%22%5D%7D%7D%5D",
+      "title": "Memberships"
+    },
+    "showUser": {
+      "href": "/users/4",
+      "type": "text/html"
+    },
+    "updateImmediately": {
+      "href": "/api/v3/users/4",
+      "title": "Update admin",
+      "method": "patch"
+    },
+    "lock": {
+      "href": "/api/v3/users/4/lock",
+      "title": "Set lock on admin",
+      "method": "post"
+    }
+  }
+}

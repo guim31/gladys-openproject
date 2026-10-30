@@ -1,0 +1,65 @@
+{
+  "_type": "Collection",
+  "total": 3,
+  "count": 3,
+  "_embedded": {
+    "elements": [
+      {
+        "_type": "Type",
+        "id": 1,
+        "name": "Task",
+        "color": "#1A67A3",
+        "position": 1,
+        "isDefault": true,
+        "isMilestone": false,
+        "createdAt": "2026-10-30T17:21:36.331Z",
+        "updatedAt": "2026-10-30T17:21:36.331Z",
+        "_links": {
+          "self": {
+            "href": "/api/v3/types/1",
+            "title": "Task"
+          }
+        }
+      },
+      {
+        "_type": "Type",
+        "id": 2,
+        "name": "Milestone",
+        "color": "#35C53F",
+        "position": 2,
+        "isDefault": true,
+        "isMilestone": true,
+        "createdAt": "2026-10-30T17:21:36.350Z",
+        "updatedAt": "2026-10-30T17:21:36.350Z",
+        "_links": {
+          "self": {
+            "href": "/api/v3/types/2",
+            "title": "Milestone"
+          }
+        }
+      },
+      {
+        "_type": "Type",
+        "id": 3,
+        "name": "Summary task",
+        "color": "#FF922B",
+        "position": 3,
+        "isDefault": true,
+        "isMilestone": false,
+        "createdAt": "2026-10-30T17:21:36.361Z",
+        "updatedAt": "2026-10-30T17:21:36.361Z",
+        "_links": {
+          "self": {
+            "href": "/api/v3/types/3",
+            "title": "Summary task"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "self": {
+      "href": "/api/v3/projects/3/types"
+    }
+  }
+}
