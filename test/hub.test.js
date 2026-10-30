@@ -148,8 +148,14 @@ test('a big instance: more than a page of old overdue ones, today is still seen'
     next: 'Arroser les plantes · Fri 30 Oct',
   });
   const today = await w.fake.sceneAction('read_today', {});
-  assert.equal(today.data.outputs.count, 1002, 'the 1000 most recent overdue, then today');
+  assert.equal(today.data.outputs.count, 1104);
   assert.equal(today.data.outputs.overdue, 1102);
+  assert.match(
+    today.data.outputs.text,
+    /^1104 work package\(s\) due by tonight: Old .*, Tailler la haie, Sortir les poubelles and /,
+    'the ten most recent overdue ones, oldest first',
+  );
+  assert.match(today.data.outputs.text, /and \+1094\. 1102 overdue\.$/);
 });
 
 test('another key on the same instance: its assignments are not news', async (t) => {

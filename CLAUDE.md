@@ -252,7 +252,9 @@ code de ce dépôt. Compléter ce fichier quand un nouveau piège est découvert
 - **Une lecture = sept requêtes** (plus `users/me` une fois) : projets, ouverts par projet, fermés du
   jour par projet, retards par projet (`groupBy`), retards les plus récents d'abord (`dueDate desc`), lots
   dus d'hier à 60 jours, lots assignés à moi. Les retards sont comptés à part : sur une grosse instance,
-  une page de 1000 vieux retards triés par date croissante cachait ceux du jour (relecture du 30/10).
+  une page de 1000 vieux retards triés par date croissante cachait ceux du jour (relecture du 30/10) ; ces
+  requêtes (`<>d` à deux bornes, `dueDate desc`) ont été vérifiées par l'essai complet contre le vrai
+  serveur, pas par des fixtures.
 - La portée de l'état sous `/data` est `adresse#id de l'utilisateur` : une autre clé sur la même instance
   ne déclenche pas une salve de « assigné à moi ».
 - Pas de date de fermeture dans l'API : « terminés aujourd'hui » = fermés et `updatedAt` depuis minuit.

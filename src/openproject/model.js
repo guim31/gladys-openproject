@@ -188,6 +188,9 @@ export function addDays(ms, days, timeZone) {
 
 // --- Counters ---------------------------------------------------------------------
 
+// The overdue work packages kept in the agenda (the widget shows ten rows).
+export const AGENDA_OVERDUE = 10;
+
 /**
  * Counters of one day, for a scope: the whole instance, or one project.
  * @param {object} reading
@@ -202,14 +205,21 @@ export function addDays(ms, days, timeZone) {
 export function summarize({ dated, late, overdueCount, mine, open, done }, day) {
   const order = (a, b) => a.dueAt - b.dueAt || Number(a.id) - Number(b.id);
   const ahead = dated.filter((item) => item.dueAt !== null && item.dueAt >= day.start).sort(order);
-  const behind = late.filter((item) => item.dueAt !== null && item.dueAt < day.start).sort(order);
+  // The most recent overdue ones, shown oldest first (a big instance may have
+  // thousands: the widget and the sentence show ten).
+  const behind = late
+    .filter((item) => item.dueAt !== null && item.dueAt < day.start)
+    .sort((a, b) => order(b, a))
+    .slice(0, AGENDA_OVERDUE)
+    .reverse();
   const today = ahead.filter((item) => item.dueAt < day.end);
   return {
     dayStart: day.start,
     open,
     done,
     mine,
-    overdue: overdueCount ?? behind.length,
+    overdue:
+      overdueCount ?? late.filter((item) => item.dueAt !== null && item.dueAt < day.start).length,
     dueToday: today.length,
     next: ahead[0] ?? null,
     // What is left by tonight: overdue first, then today's.

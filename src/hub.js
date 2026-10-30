@@ -275,7 +275,7 @@ export class OpenProjectHub {
     return this.polling;
   }
 
-  /** Five requests, one after the other: a small server is not hit at once. */
+  /** Seven requests, one after the other: a small server is not hit at once. */
   async fetch(client, now) {
     const user = this.user ?? (await client.me());
     const projects = parseProjects((await client.projects()).elements);
@@ -938,19 +938,19 @@ export class OpenProjectHub {
     const mine = onlyMine === true || onlyMine === 'true';
     const summary = this.summary(projectId, { onlyMine: mine });
     const texts = TODAY_TEXT[this.language] ?? TODAY_TEXT.en;
+    const total = summary.overdue + summary.dueToday;
     const names = summary.agenda.slice(0, MAX_NAMES).map((item) => item.name);
-    const more = summary.agenda.length - names.length;
+    const more = total - names.length;
     if (more > 0) {
       names.push(`+${more}`);
     }
     const text =
-      summary.agenda.length === 0
+      total === 0
         ? texts.none
-        : texts.list(summary.agenda.length, names) +
-          (summary.overdue > 0 ? texts.overdue(summary.overdue) : '');
+        : texts.list(total, names) + (summary.overdue > 0 ? texts.overdue(summary.overdue) : '');
     return {
       text: text.slice(0, 1000),
-      count: summary.agenda.length,
+      count: total,
       overdue: summary.overdue,
     };
   }
