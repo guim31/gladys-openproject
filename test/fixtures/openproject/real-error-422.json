@@ -1,0 +1,10 @@
+{
+  "_type": "Error",
+  "errorIdentifier": "urn:openproject-org:api:v3:errors:PropertyFormatError",
+  "message": "Invalid format for property 'dueDate': Expected format like 'YYYY-MM-DD (ISO 8601 date only)', but got '2026-02-30'.",
+  "_embedded": {
+    "details": {
+      "attribute": "dueDate"
+    }
+  }
+}

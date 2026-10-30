@@ -30,6 +30,22 @@ Gladys before reporting a problem.
 
 In scope: the code of this repository and the Docker image it publishes.
 
+What the integration handles:
+
+- the **API key** of an OpenProject user, stored by Gladys in the integration
+  configuration (`secret` field), sent only to the configured OpenProject
+  address (HTTP Basic, `apikey:<key>`), and never logged;
+- under `/data`, only `openproject-state.json`: the configured address, the
+  time of the last reading, the ids of the open work packages assigned to the
+  user, and the due events already sent (no secret, no subject);
+- network: outgoing HTTP(S) requests to the configured OpenProject address
+  only. With "Accept self-signed certificates" ticked, the certificate of that
+  address is not verified.
+
+The key opens everything its user may do in OpenProject: prefer a dedicated
+user, member of the followed projects only, with a role that allows reading
+and creating work packages.
+
 Out of scope: Gladys Assistant itself (see its
 [security policy](https://github.com/GladysAssistant/Gladys/security/policy)),
-and the third-party services and devices the integration talks to.
+and OpenProject itself.

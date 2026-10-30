@@ -1,0 +1,189 @@
+# OpenProject
+
+Los paquetes de trabajo de su [OpenProject](https://www.openproject.org) en
+Gladys: los abiertos, los que vencen hoy, los atrasados, los asignados a usted,
+los terminados hoy y el próximo vencimiento, para toda la instancia y para los
+proyectos que usted elija. Una escena reacciona cuando se le asigna un
+paquete, vence o se atrasa, otra crea «revisar los detectores de humo» cada
+mes, y Gladys puede leer los paquetes del día cada mañana.
+
+> **Sus comentarios son bienvenidos.** Esta integración se ha probado con un
+> servidor OpenProject real (imagen Docker `openproject/openproject:16`,
+> edición Community, octubre de 2026), aún no en el uso diario. Si algo no
+> funciona como se describe, díganoslo en el
+> [foro de Gladys](https://community.gladysassistant.com) o en las
+> [issues](https://github.com/guim31/gladys-openproject/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Un **OpenProject** accesible desde Gladys: autoalojado (basta la edición
+  Community) o en la nube de OpenProject.
+- Una **clave de API** de un usuario de OpenProject: en OpenProject, avatar →
+  **Mi cuenta** → **Tokens de acceso** → **API** → **+ Token de API**. Si falta
+  la sección API, un administrador la activa en **Administración** → **API y
+  webhooks** («Activar el servicio web REST»).
+
+La integración ve los proyectos y paquetes que ve este usuario, y actúa **en
+su nombre**: los paquetes creados desde Gladys lo tienen como autor, y
+«Asignados a mí» cuenta los paquetes que se le asignan. Un usuario dedicado,
+miembro de los proyectos que se siguen, es una buena idea.
+
+## Configuración
+
+1. En Gladys, **Integraciones** → instale **OpenProject**.
+2. En la pantalla **Configuración**, indique:
+   - **Dirección**: la dirección de OpenProject como en el navegador, por
+     ejemplo `http://192.168.1.20:8080`, o `https://proyectos.example.org`
+     detrás de un proxy inverso (un prefijo como `/openproject` se conserva);
+   - **Clave de API**.
+3. Opciones:
+   - **Proyectos seguidos**: nombres o identificadores (el de la dirección del
+     proyecto, `/projects/casa`) separados por comas, 20 como máximo. Cada uno
+     tiene su dispositivo, además del de toda la instancia. Vacío: solo el
+     dispositivo de la instancia;
+   - **Hora del evento «vence»**: la hora del disparador **Paquete de
+     OpenProject que vence**, el día del vencimiento (08:00 por defecto);
+   - **Aceptar certificados autofirmados**: para una dirección `https://` con
+     un certificado autofirmado, solo en su propio servidor;
+   - **Intervalo de actualización**: de 1 a 10 minutos (5 por defecto). Las
+     horas de los eventos y la medianoche se siguen siempre a tiempo, sea cual
+     sea el intervalo;
+   - **Idioma de los nombres de funciones**: los nombres dados a las funciones
+     al añadir un dispositivo (francés por defecto), y los textos enviados a
+     las escenas.
+4. Guarde y luego **Probar la conexión**: lee OpenProject e indica el usuario
+   de la clave, el número de paquetes abiertos y de proyectos seguidos.
+5. En la pestaña **Descubrimiento**, añada los dispositivos que desee.
+
+## Dispositivos
+
+**OpenProject**, para toda la instancia (todos los proyectos que ve el
+usuario), y **OpenProject _proyecto_** para cada proyecto seguido, con estas
+funciones:
+
+| Función                        | Lo que indica                                                                         |
+| ------------------------------ | ------------------------------------------------------------------------------------- |
+| `Paquetes de trabajo abiertos` | los paquetes cuyo estado no es un estado cerrado                                      |
+| `Vencen hoy`                   | los paquetes abiertos cuya fecha de fin es hoy                                        |
+| `Atrasados`                    | los paquetes abiertos cuya fecha de fin ya pasó                                       |
+| `Asignados a mí`               | los paquetes abiertos asignados al usuario de la clave                                |
+| `Terminados hoy`               | los paquetes cerrados modificados por última vez hoy                                  |
+| `Próximo vencimiento`          | el paquete abierto con la fecha de fin más cercana, hoy incluido; `Ninguno` si no hay |
+
+Un paquete está **abierto** mientras su estado no esté marcado como «cerrado»
+en OpenProject (`Closed`, `Rejected` en la configuración por defecto). Su
+vencimiento es su **fecha de fin**, o la fecha de un **hito**. «Hoy» es el día
+en la zona horaria de Gladys. OpenProject no guarda la fecha de cierre:
+«Terminados hoy» cuenta los paquetes cerrados modificados hoy, así que también
+uno cerrado antes y comentado hoy. Los contadores de un proyecto no incluyen
+sus subproyectos; el dispositivo de la instancia lo cuenta todo.
+
+## Panel de control
+
+El widget **Paquetes de hoy** muestra dos mosaicos (hoy, atrasados) y la lista
+de paquetes por terminar esta noche (10 como máximo), primero los atrasados con
+su fecha, luego los de hoy, con su proyecto. Elija un dispositivo de proyecto
+en la configuración del widget para ver solo sus paquetes, y marque **Solo los
+asignados a mí** para ver solo los suyos. Cuando no vence nada, el widget lo
+dice e indica el próximo vencimiento. Los proyectos llevan el nombre dado en
+Gladys una vez añadido su dispositivo.
+
+Los contadores también pueden ir al panel como cualquier función de
+dispositivo.
+
+## Escenas
+
+### Disparadores
+
+- **Paquete de OpenProject asignado a mí**: un paquete abierto está ahora
+  asignado al usuario de la clave: se le acaba de asignar, lo creó a su
+  nombre, o se reabrió uno que tenía asignado.
+- **Paquete de OpenProject que vence**: el día de su vencimiento, a la hora
+  elegida en la configuración, un paquete sigue abierto.
+- **Paquete de OpenProject atrasado**: a medianoche, un paquete que vencía ese
+  día sigue abierto. Una vez por paquete y vencimiento.
+
+Filtro: el proyecto (un dispositivo de proyecto, no el de la instancia). Datos
+pasados a las acciones: el paquete, su identificador, su proyecto, su tipo, su
+estado, la persona asignada, su vencimiento (`AAAA-MM-DD`) y su dirección en
+OpenProject.
+
+Un cambio se ve en la lectura siguiente: dentro del intervalo de
+actualización. Un vencimiento movido a mano a un día ya pasado no dispara
+nada. Un reinicio no dispara nada dos veces; un paquete asignado mientras la
+integración estaba detenida dispara al reiniciarse, igual que un vencimiento
+de menos de una hora.
+
+### Acciones
+
+- **Crear un paquete de OpenProject**: un asunto; el proyecto por su nombre o
+  su identificador (vacío: el primer proyecto seguido); el tipo por su nombre,
+  exactamente como en OpenProject (vacío: el primer tipo del proyecto que no
+  es un hito, `Task` por defecto); un **vencimiento** opcional: `2026-10-24`,
+  o `+3d` para dentro de tres días. El paquete se crea a nombre del usuario de
+  la clave, sin asignar. OpenProject mueve un vencimiento en un día no
+  laborable (el fin de semana, por defecto) al siguiente día laborable: el
+  resultado da la fecha guardada. Resultados: el paquete, su identificador, su
+  dirección, su proyecto, su tipo, su vencimiento.
+- **Leer los paquetes de OpenProject de hoy**: los paquetes por terminar esta
+  noche en una frase
+  (`3 paquete(s) de trabajo para esta noche: …. 1 atrasado(s).`), para toda la
+  instancia o un proyecto, para todos los paquetes o los asignados al usuario.
+  Resultados: la frase, el número de paquetes para esta noche y de paquetes
+  atrasados. Envíe la frase en un mensaje, o haga que Gladys la diga.
+
+Los campos aceptan variables de escena, por ejemplo
+`{{triggerEvent.data.work_package}}`.
+
+### Ideas de escenas
+
+- A las 08:00, **Leer los paquetes de OpenProject de hoy** (asignados a mí), y
+  enviar la frase por Telegram.
+- **Paquete de OpenProject asignado a mí**: enviar el asunto y la dirección
+  del paquete en un mensaje.
+- **Paquete de OpenProject atrasado** en el proyecto `Casa`: encender la
+  lámpara de aviso en naranja.
+- El primer día del mes, **Crear un paquete de OpenProject**
+  `Revisar los detectores de humo` en `casa`, vencimiento `+7d`.
+
+## Solución de problemas
+
+- **«OpenProject no responde»**: compruebe la dirección y el puerto desde el
+  equipo de Gladys (la dirección abre OpenProject en un navegador).
+- **«Clave de API rechazada»**: la clave se revocó, o su usuario está
+  bloqueado: cree una nueva clave.
+- **«No hay ninguna API de OpenProject en esta dirección»**: la dirección
+  responde, pero no con la API de OpenProject: compruebe el puerto y el
+  prefijo.
+- **«La dirección redirige»**: introduzca la dirección `https://`.
+- **«Este usuario no tiene este permiso»**: su rol en el proyecto no le
+  permite crear paquetes.
+- **«Valores rechazados»**: OpenProject rechazó el paquete; el resto del
+  mensaje es su explicación (una fecha mal escrita, un campo personalizado
+  obligatorio…).
+- **Falta un proyecto**: el usuario debe ser miembro; un nombre escrito en
+  **Proyectos seguidos** que no corresponde a ningún proyecto se ignora, y
+  **Probar la conexión** lo indica. Los proyectos archivados se descartan.
+- **«Varios proyectos tienen este nombre»**: indique su identificador.
+- Registros: `LOG_LEVEL=debug` en el contenedor muestra cada lectura.
+
+## Límites
+
+- OpenProject se lee cada 1 a 10 minutos (y a las horas de los eventos y a
+  medianoche): un cambio en OpenProject aparece en Gladys en ese plazo. Los
+  webhooks de OpenProject no se usan. Cada lectura hace cinco solicitudes
+  (proyectos, dos recuentos, paquetes con fecha, paquetes asignados).
+- Para los vencimientos solo cuentan los paquetes que vencen hasta 60 días
+  después, 1000 como máximo (y 1000 paquetes asignados como máximo); más allá,
+  los registros lo indican.
+- La integración crea paquetes; no los modifica, ni los cierra, ni los asigna,
+  ni los elimina, y no lee ni sus comentarios, ni sus adjuntos, ni el tiempo
+  dedicado.
+- Gladys guarda la clave de API en la configuración de la integración y solo
+  la envía a la dirección configurada. Gladys no guarda ningún dato de
+  OpenProject fuera de `/data/openproject-state.json` (la hora de la última
+  lectura y los identificadores de los paquetes asignados, para que ningún
+  evento se dispare dos veces).
+- Sin relación con OpenProject GmbH. OpenProject es una marca de OpenProject
+  GmbH.

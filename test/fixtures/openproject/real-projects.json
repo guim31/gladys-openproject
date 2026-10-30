@@ -1,0 +1,188 @@
+{
+  "_type": "Collection",
+  "total": 2,
+  "count": 2,
+  "pageSize": 1000,
+  "offset": 1,
+  "_embedded": {
+    "elements": [
+      {
+        "_type": "Project",
+        "id": 4,
+        "identifier": "jardin",
+        "name": "Jardin",
+        "active": true,
+        "public": false,
+        "description": {
+          "format": "markdown",
+          "raw": "",
+          "html": ""
+        },
+        "createdAt": "2026-10-30T17:39:46.027Z",
+        "updatedAt": "2026-10-30T17:39:46.077Z",
+        "statusExplanation": {
+          "format": "markdown",
+          "raw": "",
+          "html": ""
+        },
+        "_links": {
+          "self": {
+            "href": "/api/v3/projects/4",
+            "title": "Jardin"
+          },
+          "createWorkPackage": {
+            "href": "/api/v3/projects/4/work_packages/form",
+            "method": "post"
+          },
+          "createWorkPackageImmediately": {
+            "href": "/api/v3/projects/4/work_packages",
+            "method": "post"
+          },
+          "workPackages": {
+            "href": "/api/v3/projects/4/work_packages"
+          },
+          "storages": [],
+          "categories": {
+            "href": "/api/v3/projects/4/categories"
+          },
+          "versions": {
+            "href": "/api/v3/projects/4/versions"
+          },
+          "memberships": {
+            "href": "/api/v3/memberships?filters=%5B%7B%22project%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%224%22%5D%7D%7D%5D"
+          },
+          "types": {
+            "href": "/api/v3/projects/4/types"
+          },
+          "update": {
+            "href": "/api/v3/projects/4/form",
+            "method": "post"
+          },
+          "updateImmediately": {
+            "href": "/api/v3/projects/4",
+            "method": "patch"
+          },
+          "delete": {
+            "href": "/api/v3/projects/4",
+            "method": "delete"
+          },
+          "schema": {
+            "href": "/api/v3/projects/schema"
+          },
+          "status": {
+            "href": null
+          },
+          "ancestors": [],
+          "projectStorages": {
+            "href": "/api/v3/project_storages?filters=%5B%7B%22projectId%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%224%22%5D%7D%7D%5D"
+          },
+          "parent": {
+            "href": null
+          }
+        }
+      },
+      {
+        "_type": "Project",
+        "id": 3,
+        "identifier": "maison",
+        "name": "Maison",
+        "active": true,
+        "public": false,
+        "description": {
+          "format": "markdown",
+          "raw": "",
+          "html": ""
+        },
+        "createdAt": "2026-10-30T17:39:44.966Z",
+        "updatedAt": "2026-10-30T17:39:46.077Z",
+        "statusExplanation": {
+          "format": "markdown",
+          "raw": "",
+          "html": ""
+        },
+        "_links": {
+          "self": {
+            "href": "/api/v3/projects/3",
+            "title": "Maison"
+          },
+          "createWorkPackage": {
+            "href": "/api/v3/projects/3/work_packages/form",
+            "method": "post"
+          },
+          "createWorkPackageImmediately": {
+            "href": "/api/v3/projects/3/work_packages",
+            "method": "post"
+          },
+          "workPackages": {
+            "href": "/api/v3/projects/3/work_packages"
+          },
+          "storages": [],
+          "categories": {
+            "href": "/api/v3/projects/3/categories"
+          },
+          "versions": {
+            "href": "/api/v3/projects/3/versions"
+          },
+          "memberships": {
+            "href": "/api/v3/memberships?filters=%5B%7B%22project%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%223%22%5D%7D%7D%5D"
+          },
+          "types": {
+            "href": "/api/v3/projects/3/types"
+          },
+          "update": {
+            "href": "/api/v3/projects/3/form",
+            "method": "post"
+          },
+          "updateImmediately": {
+            "href": "/api/v3/projects/3",
+            "method": "patch"
+          },
+          "delete": {
+            "href": "/api/v3/projects/3",
+            "method": "delete"
+          },
+          "schema": {
+            "href": "/api/v3/projects/schema"
+          },
+          "status": {
+            "href": null
+          },
+          "ancestors": [],
+          "projectStorages": {
+            "href": "/api/v3/project_storages?filters=%5B%7B%22projectId%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%223%22%5D%7D%7D%5D"
+          },
+          "parent": {
+            "href": null
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "self": {
+      "href": "/api/v3/projects?filters=%5B%7B%22active%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%22t%22%5D%7D%7D%5D&offset=1&pageSize=1000"
+    },
+    "jumpTo": {
+      "href": "/api/v3/projects?filters=%5B%7B%22active%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%22t%22%5D%7D%7D%5D&offset=%7Boffset%7D&pageSize=1000",
+      "templated": true
+    },
+    "changeSize": {
+      "href": "/api/v3/projects?filters=%5B%7B%22active%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%22t%22%5D%7D%7D%5D&offset=1&pageSize=%7Bsize%7D",
+      "templated": true
+    },
+    "representations": [
+      {
+        "href": "/projects.csv?filters=%5B%7B%22active%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%22t%22%5D%7D%7D%5D&offset=1&pageSize=1000",
+        "identifier": "csv",
+        "type": "text/csv",
+        "title": "CSV"
+      },
+      {
+        "href": "/projects.xls?filters=%5B%7B%22active%22%3A%7B%22operator%22%3A%22%3D%22%2C%22values%22%3A%5B%22t%22%5D%7D%7D%5D&offset=1&pageSize=1000",
+        "identifier": "xls",
+        "type": "application/vnd.ms-excel",
+        "title": "XLS"
+      }
+    ]
+  }
+}

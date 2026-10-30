@@ -1,0 +1,239 @@
+[
+  {
+    "id": 39,
+    "subject": "Arroser les plantes",
+    "dueDate": "2026-10-30",
+    "updatedAt": "2026-10-30T17:40:19.742Z",
+    "_links": {
+      "project": {
+        "href": "/api/v3/projects/3",
+        "title": "Maison"
+      },
+      "status": {
+        "href": "/api/v3/statuses/1",
+        "title": "New"
+      },
+      "type": {
+        "href": "/api/v3/types/1",
+        "title": "Task"
+      },
+      "assignee": {
+        "href": "/api/v3/users/5",
+        "title": "Camille Martin"
+      }
+    }
+  },
+  {
+    "id": 40,
+    "subject": "Ranger le grenier",
+    "dueDate": null,
+    "updatedAt": "2026-10-30T17:40:22.719Z",
+    "_links": {
+      "project": {
+        "href": "/api/v3/projects/3",
+        "title": "Maison"
+      },
+      "status": {
+        "href": "/api/v3/statuses/1",
+        "title": "New"
+      },
+      "type": {
+        "href": "/api/v3/types/1",
+        "title": "Task"
+      },
+      "assignee": {
+        "href": null
+      }
+    }
+  },
+  {
+    "id": 41,
+    "subject": "Fin des travaux",
+    "date": "2026-11-16",
+    "updatedAt": "2026-10-30T17:40:23.832Z",
+    "_links": {
+      "project": {
+        "href": "/api/v3/projects/3",
+        "title": "Maison"
+      },
+      "status": {
+        "href": "/api/v3/statuses/1",
+        "title": "New"
+      },
+      "type": {
+        "href": "/api/v3/types/2",
+        "title": "Milestone"
+      },
+      "assignee": {
+        "href": null
+      }
+    }
+  },
+  {
+    "id": 42,
+    "subject": "Tondre la pelouse",
+    "dueDate": "2026-11-02",
+    "updatedAt": "2026-10-30T17:40:24.818Z",
+    "_links": {
+      "project": {
+        "href": "/api/v3/projects/4",
+        "title": "Jardin"
+      },
+      "status": {
+        "href": "/api/v3/statuses/1",
+        "title": "New"
+      },
+      "type": {
+        "href": "/api/v3/types/1",
+        "title": "Task"
+      },
+      "assignee": {
+        "href": "/api/v3/users/5",
+        "title": "Camille Martin"
+      }
+    }
+  },
+  {
+    "id": 43,
+    "subject": "Tailler la haie",
+    "dueDate": "2026-10-28",
+    "updatedAt": "2026-10-30T17:40:25.814Z",
+    "_links": {
+      "project": {
+        "href": "/api/v3/projects/4",
+        "title": "Jardin"
+      },
+      "status": {
+        "href": "/api/v3/statuses/1",
+        "title": "New"
+      },
+      "type": {
+        "href": "/api/v3/types/1",
+        "title": "Task"
+      },
+      "assignee": {
+        "href": null
+      }
+    }
+  },
+  {
+    "id": 44,
+    "subject": "Sortir les poubelles",
+    "dueDate": "2026-10-29",
+    "updatedAt": "2026-10-30T17:40:35.886Z",
+    "_links": {
+      "project": {
+        "href": "/api/v3/projects/3",
+        "title": "Maison"
+      },
+      "status": {
+        "href": "/api/v3/statuses/1",
+        "title": "New"
+      },
+      "type": {
+        "href": "/api/v3/types/1",
+        "title": "Task"
+      },
+      "assignee": {
+        "href": "/api/v3/users/4",
+        "title": "OpenProject Admin"
+      }
+    }
+  },
+  {
+    "id": 45,
+    "subject": "Payer la cantine",
+    "dueDate": "2026-10-30",
+    "updatedAt": "2026-10-30T17:40:36.900Z",
+    "_links": {
+      "project": {
+        "href": "/api/v3/projects/3",
+        "title": "Maison"
+      },
+      "status": {
+        "href": "/api/v3/statuses/1",
+        "title": "New"
+      },
+      "type": {
+        "href": "/api/v3/types/1",
+        "title": "Task"
+      },
+      "assignee": {
+        "href": "/api/v3/users/4",
+        "title": "OpenProject Admin"
+      }
+    }
+  },
+  {
+    "id": 46,
+    "subject": "Changer les draps",
+    "dueDate": "2026-10-30",
+    "updatedAt": "2026-10-30T17:40:38.917Z",
+    "_links": {
+      "project": {
+        "href": "/api/v3/projects/3",
+        "title": "Maison"
+      },
+      "status": {
+        "href": "/api/v3/statuses/12",
+        "title": "Closed"
+      },
+      "type": {
+        "href": "/api/v3/types/1",
+        "title": "Task"
+      },
+      "assignee": {
+        "href": "/api/v3/users/4",
+        "title": "OpenProject Admin"
+      }
+    }
+  },
+  {
+    "id": 47,
+    "subject": "Réparer le robinet",
+    "dueDate": "2026-11-02",
+    "updatedAt": "2026-10-30T17:40:39.909Z",
+    "_links": {
+      "project": {
+        "href": "/api/v3/projects/3",
+        "title": "Maison"
+      },
+      "status": {
+        "href": "/api/v3/statuses/1",
+        "title": "New"
+      },
+      "type": {
+        "href": "/api/v3/types/1",
+        "title": "Task"
+      },
+      "assignee": {
+        "href": "/api/v3/users/4",
+        "title": "OpenProject Admin"
+      }
+    }
+  },
+  {
+    "id": 48,
+    "subject": "Commander du terreau",
+    "dueDate": null,
+    "updatedAt": "2026-10-30T17:40:42.280Z",
+    "_links": {
+      "project": {
+        "href": "/api/v3/projects/4",
+        "title": "Jardin"
+      },
+      "status": {
+        "href": "/api/v3/statuses/12",
+        "title": "Closed"
+      },
+      "type": {
+        "href": "/api/v3/types/1",
+        "title": "Task"
+      },
+      "assignee": {
+        "href": "/api/v3/users/4",
+        "title": "OpenProject Admin"
+      }
+    }
+  }
+]

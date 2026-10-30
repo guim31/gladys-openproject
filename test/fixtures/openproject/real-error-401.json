@@ -1,0 +1,5 @@
+{
+  "_type": "Error",
+  "errorIdentifier": "urn:openproject-org:api:v3:errors:Unauthenticated",
+  "message": "You did not provide the correct credentials."
+}

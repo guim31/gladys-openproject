@@ -1,0 +1,29 @@
+{
+  "id": 50,
+  "subject": "Récolte",
+  "date": "2026-11-20",
+  "startDate": null,
+  "_type": "WorkPackage",
+  "lockVersion": 0,
+  "_links": {
+    "self": {
+      "href": "/api/v3/work_packages/50",
+      "title": "Récolte"
+    },
+    "project": {
+      "href": "/api/v3/projects/4",
+      "title": "Jardin"
+    },
+    "status": {
+      "href": "/api/v3/statuses/1",
+      "title": "New"
+    },
+    "type": {
+      "href": "/api/v3/types/2",
+      "title": "Milestone"
+    },
+    "assignee": {
+      "href": null
+    }
+  }
+}

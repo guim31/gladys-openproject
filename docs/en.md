@@ -1,61 +1,181 @@
-# Demo Devices Template
+# OpenProject
 
-This is the user documentation of the integration. Gladys re-hosts this file
-and shows a permanent **Documentation** link to it in the Configuration screen
-(in the user's language, with English as the fallback) — it is when
-configuring that the user needs it most. Keep the short onboarding hints in
-the `section` blocks of the manifest `config_schema`; put the long
-step-by-step (screenshots, troubleshooting…) here.
+The work packages of your [OpenProject](https://www.openproject.org) in
+Gladys: the open ones, those due today, the overdue ones, those assigned to
+you, those done today and the next due date, for the whole instance and for
+the projects you choose. A scene reacts when a work package is assigned to
+you, comes due or becomes overdue, another one creates "check the smoke
+detectors" every month, and Gladys can read today's work packages every
+morning.
 
-## What you get
+> **Feedback welcome.** This integration was tested against a real OpenProject
+> server (Docker image `openproject/openproject:16`, Community edition, October
+> 2026), not yet in daily use. If something does not work as described, say so
+> on the [Gladys forum](https://community.gladysassistant.com) or in the
+> [issues](https://github.com/guim31/gladys-openproject/issues).
 
-Six demo devices show up after installation: a weather station (real data
-from Open-Meteo), a switch, a dimmable light, a smart plug with power
-metering, a motion sensor and a camera.
+## What you need
 
-## Configuration
+- Gladys Assistant 5.1.0 or later.
+- An **OpenProject** Gladys can reach: self-hosted (the Community edition is
+  enough) or in OpenProject's cloud.
+- An **API key** of an OpenProject user: in OpenProject, avatar → **My
+  account** → **Access tokens** → **API** → **+ API token**. If the API
+  section is missing, an administrator turns it on in **Administration** →
+  **API and webhooks** ("Enable REST web service").
 
-1. Open the **Configuration** tab of the integration.
-2. Set the **latitude** and **longitude** the demo weather station should
-   observe (they default to Paris), and pick your temperature unit.
-   The **refresh interval** sets how often the weather station and the
-   plug's power are read: every 5 minutes by default, every minute at most.
-3. Save: the devices appear in the **Discovery** tab, ready to be added.
+The integration sees the projects and work packages this user sees, and acts
+**in their name**: the work packages created from Gladys have them as author,
+and "Assigned to me" counts the work packages assigned to them. A dedicated
+user, member of the projects to follow, is a good idea.
 
-The **Prefer the local connection** toggle drives the demo plug: it reports
-the channel it actually uses as a badge (local or cloud), with an orange dot
-when it runs degraded (local refused, cloud fallback).
+## Set up
 
-## Actions
+1. In Gladys, **Integrations** → install **OpenProject**.
+2. On the **Configuration** screen, fill in:
+   - **Address**: the address of OpenProject as in the browser, for example
+     `http://192.168.1.20:8080`, or `https://projects.example.org` behind a
+     reverse proxy (a prefix such as `/openproject` is kept);
+   - **API key**.
+3. Options:
+   - **Followed projects**: names or identifiers (the one in the project's
+     address, `/projects/home`) separated by commas, 20 at most. Each gets its
+     device, besides the one of the whole instance. Empty: the instance device
+     only;
+   - **Time of the "due" event**: the time of the **OpenProject work package
+     due** trigger, on the due day (08:00 by default);
+   - **Accept self-signed certificates**: for an `https://` address with a
+     self-signed certificate, on your own server only;
+   - **Refresh interval**: 1 to 10 minutes (5 by default). Event times and
+     midnight are always followed on time, whatever the interval;
+   - **Language of the feature names**: the names given to the features when
+     a device is added (French by default), and the texts sent to scenes.
+4. Save, then **Test the connection**: it reads OpenProject and reports the
+   user of the key, the number of open work packages and of followed projects.
+5. In the **Discovery** tab, add the devices you want.
 
-- **Test the weather provider** — performs a live request to Open-Meteo and
-  shows the current temperature and humidity under the button.
-- **Identify a device** — pick one of your devices in the list and it will
-  signal itself (the demo light "blinks" in the logs).
+## Devices
 
-## Scenes
+**OpenProject**, for the whole instance (every project the user sees), and
+**OpenProject _project_** for each followed project, with these features:
 
-The integration adds its own cards to the scene editor (Gladys 5.1 or
-later), under the **Integrations** category:
+| Feature              | What it shows                                                                   |
+| -------------------- | ------------------------------------------------------------------------------- |
+| `Open work packages` | the work packages whose status is not a closed one                              |
+| `Due today`          | the open work packages whose finish date is today                               |
+| `Overdue`            | the open work packages whose finish date has passed                             |
+| `Assigned to me`     | the open work packages assigned to the user of the key                          |
+| `Done today`         | the closed work packages last changed today                                     |
+| `Next due date`      | the open work package with the nearest finish date, today included; `None` else |
 
-- **Motion detected** (trigger) — starts the scene when a demo motion sensor
-  sees something move. Optionally pick the sensor and what moved (person,
-  animal); left empty, any detection matches. The following actions can
-  read what moved with `{{triggerEvent.data.target}}`.
-- **Identify a device** (action) — makes the chosen device signal itself.
-  It returns whether the device could signal itself, so the following
-  actions can depend on it.
+A work package is **open** as long as its status is not marked "closed" in
+OpenProject (`Closed`, `Rejected` in the default setup). Its due date is its
+**finish date**, or the date of a **milestone**. "Today" is the day in the
+time zone of Gladys. OpenProject keeps no closing date: "Done today" counts
+the closed work packages changed today, so also one closed earlier and
+commented on today. The counters of a project do not include its subprojects;
+the instance device counts everything.
 
 ## Dashboard
 
-Add the **Demo status** widget to a dashboard: it shows the live
-temperature of the weather station and the power of the office plug, the
-connection the plug currently uses (orange when degraded) and the observed
-location. Its **Identify the light** button makes the demo light signal
-itself.
+The **Today's work packages** widget shows two tiles (today, overdue) and the
+list of the work packages to finish by tonight (10 at most), the overdue ones
+first with their date, then today's, with their project. Choose a project
+device in the widget settings to see only its work packages, and tick **Only
+those assigned to me** to see only yours. When nothing is due, the widget says
+so and gives the next due date. Projects carry the name given in Gladys once
+their device is added.
+
+The counters can also go on the dashboard like any device feature.
+
+## Scenes
+
+### Triggers
+
+- **OpenProject work package assigned to me**: an open work package is now
+  assigned to the user of the key: it was just assigned to them, they created
+  it in their name, or one assigned to them was reopened.
+- **OpenProject work package due**: on its due day, at the time chosen in the
+  configuration, a work package is still open.
+- **OpenProject work package overdue**: at midnight, a work package due that
+  day is still open. Once per work package and due date.
+
+Filter: the project (a project device, not the instance one). Data passed to
+the actions: the work package, its id, its project, its type, its status, the
+assignee, its due date (`YYYY-MM-DD`) and its address in OpenProject.
+
+A change is seen at the next reading: within the refresh interval. A due date
+moved by hand to a day already over fires nothing. A restart fires nothing
+twice; a work package assigned while the integration was stopped fires at its
+restart, as does a due date less than an hour old.
+
+### Actions
+
+- **Create an OpenProject work package**: a subject; the project by its name
+  or identifier (empty: the first followed project); the type by its name,
+  exactly as in OpenProject (empty: the project's first type that is not a
+  milestone, `Task` by default); an optional **due date**: `2026-10-24`, or
+  `+3d` for in three days. The work package is created in the name of the
+  user of the key, unassigned. OpenProject moves a due date on a non-working
+  day (the weekend, by default) to the next working day: the result gives the
+  date kept. Results: the work package, its id, its address, its project, its
+  type, its due date.
+- **Read today's OpenProject work packages**: the work packages to finish by
+  tonight as a sentence (`3 work package(s) due by tonight: …. 1 overdue.`),
+  for the whole instance or a project, and for every work package or those
+  assigned to the user. Results: the sentence, the number of work packages
+  due by tonight, of overdue ones. Send the sentence in a message, or have
+  Gladys say it.
+
+The fields accept scene variables, for example
+`{{triggerEvent.data.work_package}}`.
+
+### Scene ideas
+
+- At 08:00, **Read today's OpenProject work packages** (assigned to me), then
+  send the sentence on Telegram.
+- **OpenProject work package assigned to me**: send the subject and the
+  address of the work package in a message.
+- **OpenProject work package overdue** in the `Home` project: turn the
+  reminder lamp orange.
+- On the first of the month, **Create an OpenProject work package**
+  `Check the smoke detectors` in `home`, due `+7d`.
 
 ## Troubleshooting
 
-The integration logs everything it does: check the integration logs from the
-Gladys UI (or `docker logs` on the host) with `LOG_LEVEL=debug` for the full
-detail.
+- **"OpenProject does not answer"**: check the address and port from the
+  Gladys machine (the address opens OpenProject in a browser).
+- **"API key refused"**: the key was revoked, or its user is locked: create a
+  new key.
+- **"No OpenProject API at this address"**: the address answers, but not with
+  the OpenProject API: check the port and the prefix.
+- **"The address redirects"**: enter the `https://` address.
+- **"This user may not do this"**: their role in the project does not allow
+  creating work packages.
+- **"Values refused"**: OpenProject refused the work package; the rest of the
+  message is its explanation (a badly written date, a required custom
+  field…).
+- **A project is missing**: the user must be a member; a name typed in
+  **Followed projects** that matches no project is ignored, and **Test the
+  connection** reports it. Archived projects are left out.
+- **"Several projects have this name"**: give its identifier.
+- Logs: `LOG_LEVEL=debug` on the container shows each reading.
+
+## Limits
+
+- OpenProject is read every 1 to 10 minutes (and at the event times and at
+  midnight): a change in OpenProject shows in Gladys within that delay.
+  OpenProject's webhooks are not used. Each reading makes five requests
+  (projects, two counts, dated work packages, assigned work packages).
+- Only the work packages due up to 60 days ahead count for the due dates,
+  1000 at most (and 1000 assigned work packages at most); beyond, the logs say
+  so.
+- The integration creates work packages; it does not change, close, assign or
+  delete them, and reads neither their comments, nor their attachments, nor
+  the time spent.
+- The API key is kept by Gladys in the configuration of the integration and
+  sent only to the configured address. Gladys keeps no OpenProject data
+  outside `/data/openproject-state.json` (the time of the last reading and the
+  ids of the assigned work packages, so no event fires twice).
+- Not affiliated with OpenProject GmbH. OpenProject is a trademark of
+  OpenProject GmbH.

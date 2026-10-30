@@ -1,0 +1,124 @@
+{
+  "path": "/api/v3/work_packages?filters=%5B%7B%22status%22%3A%7B%22operator%22%3A%22c%22%2C%22values%22%3A%5B%5D%7D%7D%2C%7B%22updatedAt%22%3A%7B%22operator%22%3A%22%3C%3Ed%22%2C%22values%22%3A%5B%222026-10-29T23%3A00%3A00.000Z%22%2C%22%22%5D%7D%7D%5D&groupBy=project&pageSize=0",
+  "body": {
+    "_type": "WorkPackageCollection",
+    "total": 2,
+    "count": 0,
+    "groups": [
+      {
+        "value": "Jardin",
+        "count": 1,
+        "_links": {
+          "valueLink": [
+            {
+              "href": "/api/v3/projects/4"
+            }
+          ],
+          "groupBy": {
+            "href": "/api/v3/queries/group_bys/project",
+            "title": "Project"
+          }
+        }
+      },
+      {
+        "value": "Maison",
+        "count": 1,
+        "_links": {
+          "valueLink": [
+            {
+              "href": "/api/v3/projects/3"
+            }
+          ],
+          "groupBy": {
+            "href": "/api/v3/queries/group_bys/project",
+            "title": "Project"
+          }
+        }
+      }
+    ],
+    "pageSize": 0,
+    "offset": 1,
+    "_embedded": {
+      "elements": []
+    },
+    "_links": {
+      "self": {
+        "href": "/api/v3/work_packages?filters=%5B%7B%22status%22%3A%7B%22operator%22%3A%22c%22%2C%22values%22%3A%5B%5D%7D%7D%2C%7B%22updatedAt%22%3A%7B%22operator%22%3A%22%3C%3Ed%22%2C%22values%22%3A%5B%222026-10-29T23%3A00%3A00.000Z%22%2C%22%22%5D%7D%7D%5D&groupBy=project&includeSubprojects=true&offset=1&pageSize=0&showHierarchies=false&showSums=false&sortBy=%5B%5B%22id%22%2C%22asc%22%5D%5D"
+      },
+      "jumpTo": {
+        "href": "/api/v3/work_packages?filters=%5B%7B%22status%22%3A%7B%22operator%22%3A%22c%22%2C%22values%22%3A%5B%5D%7D%7D%2C%7B%22updatedAt%22%3A%7B%22operator%22%3A%22%3C%3Ed%22%2C%22values%22%3A%5B%222026-10-29T23%3A00%3A00.000Z%22%2C%22%22%5D%7D%7D%5D&groupBy=project&includeSubprojects=true&offset=%7Boffset%7D&pageSize=0&showHierarchies=false&showSums=false&sortBy=%5B%5B%22id%22%2C%22asc%22%5D%5D",
+        "templated": true
+      },
+      "changeSize": {
+        "href": "/api/v3/work_packages?filters=%5B%7B%22status%22%3A%7B%22operator%22%3A%22c%22%2C%22values%22%3A%5B%5D%7D%7D%2C%7B%22updatedAt%22%3A%7B%22operator%22%3A%22%3C%3Ed%22%2C%22values%22%3A%5B%222026-10-29T23%3A00%3A00.000Z%22%2C%22%22%5D%7D%7D%5D&groupBy=project&includeSubprojects=true&offset=1&pageSize=%7Bsize%7D&showHierarchies=false&showSums=false&sortBy=%5B%5B%22id%22%2C%22asc%22%5D%5D",
+        "templated": true
+      },
+      "nextByOffset": {
+        "href": "/api/v3/work_packages?filters=%5B%7B%22status%22%3A%7B%22operator%22%3A%22c%22%2C%22values%22%3A%5B%5D%7D%7D%2C%7B%22updatedAt%22%3A%7B%22operator%22%3A%22%3C%3Ed%22%2C%22values%22%3A%5B%222026-10-29T23%3A00%3A00.000Z%22%2C%22%22%5D%7D%7D%5D&groupBy=project&includeSubprojects=true&offset=2&pageSize=0&showHierarchies=false&showSums=false&sortBy=%5B%5B%22id%22%2C%22asc%22%5D%5D"
+      },
+      "editWorkPackage": {
+        "href": "/api/v3/work_packages/{work_package_id}/form",
+        "method": "post",
+        "templated": true
+      },
+      "createWorkPackage": {
+        "href": "/api/v3/work_packages/form",
+        "method": "post"
+      },
+      "createWorkPackageImmediate": {
+        "href": "/api/v3/work_packages",
+        "method": "post"
+      },
+      "representations": [
+        {
+          "href": "/work_packages.pdf?filters=%5B%7B%22status%22%3A%7B%22operator%22%3A%22c%22%2C%22values%22%3A%5B%5D%7D%7D%2C%7B%22updatedAt%22%3A%7B%22operator%22%3A%22%3C%3Ed%22%2C%22values%22%3A%5B%222026-10-29T23%3A00%3A00.000Z%22%2C%22%22%5D%7D%7D%5D&groupBy=project&includeSubprojects=true&offset=1&pageSize=0&showHierarchies=false&showSums=false&sortBy=%5B%5B%22id%22%2C%22asc%22%5D%5D&pdf_export_type=table",
+          "identifier": "pdf",
+          "type": "application/pdf",
+          "title": "PDF Table"
+        },
+        {
+          "href": "/work_packages.pdf?filters=%5B%7B%22status%22%3A%7B%22operator%22%3A%22c%22%2C%22values%22%3A%5B%5D%7D%7D%2C%7B%22updatedAt%22%3A%7B%22operator%22%3A%22%3C%3Ed%22%2C%22values%22%3A%5B%222026-10-29T23%3A00%3A00.000Z%22%2C%22%22%5D%7D%7D%5D&groupBy=project&includeSubprojects=true&offset=1&pageSize=0&showHierarchies=false&showSums=false&sortBy=%5B%5B%22id%22%2C%22asc%22%5D%5D&pdf_export_type=report&show_images=true",
+          "identifier": "pdf-with-descriptions",
+          "type": "application/pdf",
+          "title": "PDF Report with images"
+        },
+        {
+          "href": "/work_packages.pdf?filters=%5B%7B%22status%22%3A%7B%22operator%22%3A%22c%22%2C%22values%22%3A%5B%5D%7D%7D%2C%7B%22updatedAt%22%3A%7B%22operator%22%3A%22%3C%3Ed%22%2C%22values%22%3A%5B%222026-10-29T23%3A00%3A00.000Z%22%2C%22%22%5D%7D%7D%5D&groupBy=project&includeSubprojects=true&offset=1&pageSize=0&showHierarchies=false&showSums=false&sortBy=%5B%5B%22id%22%2C%22asc%22%5D%5D&pdf_export_type=report",
+          "identifier": "pdf-descr",
+          "type": "application/pdf",
+          "title": "PDF Report"
+        },
+        {
+          "href": "/work_packages.xls?filters=%5B%7B%22status%22%3A%7B%22operator%22%3A%22c%22%2C%22values%22%3A%5B%5D%7D%7D%2C%7B%22updatedAt%22%3A%7B%22operator%22%3A%22%3C%3Ed%22%2C%22values%22%3A%5B%222026-10-29T23%3A00%3A00.000Z%22%2C%22%22%5D%7D%7D%5D&groupBy=project&includeSubprojects=true&offset=1&pageSize=0&showHierarchies=false&showSums=false&sortBy=%5B%5B%22id%22%2C%22asc%22%5D%5D",
+          "identifier": "xls",
+          "type": "application/vnd.ms-excel",
+          "title": "XLS"
+        },
+        {
+          "href": "/work_packages.xls?filters=%5B%7B%22status%22%3A%7B%22operator%22%3A%22c%22%2C%22values%22%3A%5B%5D%7D%7D%2C%7B%22updatedAt%22%3A%7B%22operator%22%3A%22%3C%3Ed%22%2C%22values%22%3A%5B%222026-10-29T23%3A00%3A00.000Z%22%2C%22%22%5D%7D%7D%5D&groupBy=project&includeSubprojects=true&offset=1&pageSize=0&showHierarchies=false&showSums=false&sortBy=%5B%5B%22id%22%2C%22asc%22%5D%5D&show_descriptions=true",
+          "identifier": "xls-with-descriptions",
+          "type": "application/vnd.ms-excel",
+          "title": "XLS with descriptions"
+        },
+        {
+          "href": "/work_packages.xls?filters=%5B%7B%22status%22%3A%7B%22operator%22%3A%22c%22%2C%22values%22%3A%5B%5D%7D%7D%2C%7B%22updatedAt%22%3A%7B%22operator%22%3A%22%3C%3Ed%22%2C%22values%22%3A%5B%222026-10-29T23%3A00%3A00.000Z%22%2C%22%22%5D%7D%7D%5D&groupBy=project&includeSubprojects=true&offset=1&pageSize=0&showHierarchies=false&showSums=false&sortBy=%5B%5B%22id%22%2C%22asc%22%5D%5D&show_relations=true",
+          "identifier": "xls-with-relations",
+          "type": "application/vnd.ms-excel",
+          "title": "XLS with relations"
+        },
+        {
+          "href": "/work_packages.csv?filters=%5B%7B%22status%22%3A%7B%22operator%22%3A%22c%22%2C%22values%22%3A%5B%5D%7D%7D%2C%7B%22updatedAt%22%3A%7B%22operator%22%3A%22%3C%3Ed%22%2C%22values%22%3A%5B%222026-10-29T23%3A00%3A00.000Z%22%2C%22%22%5D%7D%7D%5D&groupBy=project&includeSubprojects=true&offset=1&pageSize=0&showHierarchies=false&showSums=false&sortBy=%5B%5B%22id%22%2C%22asc%22%5D%5D",
+          "identifier": "csv",
+          "type": "text/csv",
+          "title": "CSV"
+        },
+        {
+          "href": "/work_packages.atom?filters=%5B%7B%22status%22%3A%7B%22operator%22%3A%22c%22%2C%22values%22%3A%5B%5D%7D%7D%2C%7B%22updatedAt%22%3A%7B%22operator%22%3A%22%3C%3Ed%22%2C%22values%22%3A%5B%222026-10-29T23%3A00%3A00.000Z%22%2C%22%22%5D%7D%7D%5D&groupBy=project&includeSubprojects=true&offset=1&pageSize=0&showHierarchies=false&showSums=false&sortBy=%5B%5B%22id%22%2C%22asc%22%5D%5D",
+          "identifier": "atom",
+          "type": "application/atom+xml",
+          "title": "Atom"
+        }
+      ]
+    }
+  }
+}
