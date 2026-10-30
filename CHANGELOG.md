@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-30
+
 ### Added
 
 - First version: the work packages of an OpenProject (self-hosted or cloud,
@@ -28,3 +30,6 @@ the notes of the version's GitHub Release.
 - "Test the connection" button, a connection status that names the problem,
   local or cloud transport badges, every text in English, French, German and
   Spanish.
+
+[Unreleased]: https://github.com/guim31/gladys-openproject/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/guim31/gladys-openproject/releases/tag/v1.0.0
